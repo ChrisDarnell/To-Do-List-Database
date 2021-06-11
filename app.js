@@ -89,7 +89,7 @@ app.get("/:customListName", function (req, res) {
         });
 
         list.save();
-        res.redirect("/"+ customListName);
+        res.redirect("/" + customListName);
       } else {
         // Show an existing list
         res.render("list", {
@@ -100,10 +100,6 @@ app.get("/:customListName", function (req, res) {
     }
   });
 
-
-
-
-
 });
 
 // Post
@@ -111,41 +107,59 @@ app.get("/:customListName", function (req, res) {
 app.post("/", function (req, res) {
 
   const itemName = req.body.newItem;
+  const listName = req.body.list;
 
   const item = new Item({
     name: itemName
   });
-  item.save();
-  res.redirect("/");
+
+  if (listName === "Today") {
+    item.save();
+    res.redirect("/");
+  } else {
+    List.findOne({
+      name: listName
+    }, function (err, foundList) {
+      foundList.items.push(item);
+      foundList.save();
+      res.redirect("/" + listName);
+    });
+  }
+
 });
 
 // Delete
 
 app.post("/delete", function (req, res) {
   const checkedItemId = req.body.checkbox;
-  Item.findByIdAndRemove(checkedItemId, function (err) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Item Deleted Successfully.");
-      res.redirect("/");
-    }
-  });
+  const listName = req.body.listName;
+
+  if (listName === "Today") {
+    Item.findByIdAndRemove(checkedItemId, function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Item Deleted Successfully.");
+        res.redirect("/");
+      }
+    });
+  } else {
+    List.findOneAndUpdate({
+      name: listName
+    }, {
+      $pull: {
+        items: {
+          _id: checkedItemId
+        }
+      }
+    }, function (err, foundList) {
+      if (!err) {
+        res.redirect("/"+ listName);
+      }
+    });
+  }
 });
 
-
-
-
-app.get("/work", function (req, res) {
-  res.render("list", {
-    listTitle: "Work List",
-    newListItems: workItems
-  });
-});
-
-app.get("/about", function (req, res) {
-  res.render("about");
-});
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
