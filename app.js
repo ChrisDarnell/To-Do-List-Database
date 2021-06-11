@@ -1,5 +1,6 @@
 //jshint esversion:6
 
+const e = require("express");
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
@@ -73,8 +74,22 @@ app.post("/", function (req, res) {
   });
   item.save();
   res.redirect("/");
-
 });
+
+// Delete
+
+app.post("/delete", function (req, res) {
+    const checkedItemId = req.body.checkbox;
+    Item.findByIdAndRemove(checkedItemId, function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Item Deleted Successfully.");
+        res.redirect("/");
+      }
+    });
+});
+
 
 app.get("/work", function (req, res) {
   res.render("list", {
