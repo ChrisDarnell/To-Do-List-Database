@@ -8,6 +8,9 @@
   },
   "author": "Chris Darnell",
   "license": "ISC",
+  "engines": {
+    "node": "14.16.1"
+  },
   "dependencies": {
     "ejs": "^2.6.1",
     "express": "^4.16.3",
