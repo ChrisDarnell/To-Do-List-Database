@@ -13,9 +13,9 @@ app.use(express.urlencoded({
 }));
 app.use(express.static("public"));
 
-// Mongoose
+// Mongoose -  Change Password
 
-mongoose.connect("mongodb+srv://admin-chris:brooklyn99@cluster0.pkrhm.mongodb.net/todolistDB", {
+mongoose.connect("mongodb+srv://admin-chris:<password>@cluster0.pkrhm.mongodb.net/todolistDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
